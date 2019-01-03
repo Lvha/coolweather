@@ -7,7 +7,7 @@
     <list>
         <mapping class="com.example.lvhao.coolweather.db.City"/>
         <mapping class="com.example.lvhao.coolweather.db.County"/>
-        <mapping class="com.example.lvhao.coolweather.db.province"/>
+        <mapping class="com.example.lvhao.coolweather.db.Province"/>
 
 
     </list>

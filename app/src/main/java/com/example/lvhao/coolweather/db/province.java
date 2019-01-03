@@ -2,13 +2,13 @@ package com.example.lvhao.coolweather.db;
 
 import org.litepal.crud.DataSupport;
 
-public class province extends DataSupport {
+public class Province extends DataSupport {
 
     //省
 
     private int id;
     private String provinceName; //省名
-    private String provinceCode;  //省的代码
+    private int provinceCode;  //省的代码
 
     public int getId() {
         return id;
@@ -18,7 +18,7 @@ public class province extends DataSupport {
         return provinceName;
     }
 
-    public String getProvinceCode() {
+    public int getProvinceCode() {
         return provinceCode;
     }
 
@@ -30,7 +30,7 @@ public class province extends DataSupport {
         this.provinceName = provinceName;
     }
 
-    public void setProvinceCode(String provinceCode) {
+    public void setProvinceCode(int provinceCode) {
         this.provinceCode = provinceCode;
     }
 }

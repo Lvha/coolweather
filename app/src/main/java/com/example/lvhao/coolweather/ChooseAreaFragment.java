@@ -1,6 +1,7 @@
 package com.example.lvhao.coolweather;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -111,6 +112,12 @@ public class ChooseAreaFragment extends Fragment {
                     queryCounties();
 
 
+                } else if (currentLevel == LEVEL_COUNTY){
+                    String weaterId = countyList.get(i).getCountyName();
+                    Intent intent = new Intent(getActivity(),WeatherActivity.class);
+                    intent.putExtra("weather_id",weaterId);
+                    startActivity(intent);
+                    getActivity().finish();
                 }
 
 

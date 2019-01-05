@@ -5,6 +5,9 @@ import android.text.TextUtils;
 import com.example.lvhao.coolweather.db.City;
 import com.example.lvhao.coolweather.db.County;
 import com.example.lvhao.coolweather.db.Province;
+import com.example.lvhao.coolweather.gsonOne.Weather;
+import com.example.lvhao.coolweather.gsonOne.lvhao;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -84,6 +87,28 @@ public class Utility {
         }
 
         return true;
+
+    }
+
+    public static lvhao handleWeatherResponse(String response){
+
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+
+
+          //  JSONArray jsonArray = jsonObject.getJSONArray("HeWeather");
+           // String weatherContent = jsonArray.getJSONArray(0).toString();
+            lvhao lvhao1 = new Gson().fromJson(response,lvhao.class);
+            return lvhao1;
+
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+        return null;
+
 
     }
 

@@ -6,6 +6,9 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,9 +20,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.bumptech.glide.Glide;
 import com.example.lvhao.coolweather.gsonOne.lvhao;
+import com.example.lvhao.coolweather.service.AutoUpdataService;
 import com.example.lvhao.coolweather.util.HttpUtil;
 import com.example.lvhao.coolweather.util.Utility;
 
@@ -57,16 +60,31 @@ public class WeatherActivity extends AppCompatActivity {
 
     private ImageView bingPicImg;
 
+    public SwipeRefreshLayout swipeRefresh;
+
+    private String mWeatherName;
+
+    public DrawerLayout drawerLayout;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather);
 
-        //只支持5.0以上版本
+        /**
+         * 将上面的任务栏设置成透明色
+         * 只支持5.0以上版本
+         *
+         */
+
         if (Build.VERSION.SDK_INT >= 21){
             //拿到当前活动的DecorView
             View decorView = getWindow().getDecorView();
+            //布局显示在状态栏上面
             decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+            //设置成透明色
             getWindow().setStatusBarColor(Color.TRANSPARENT);
 
 
@@ -88,6 +106,14 @@ public class WeatherActivity extends AppCompatActivity {
 
         bingPicImg = (ImageView)findViewById(R.id.bing_pic_img);
 
+        swipeRefresh = (SwipeRefreshLayout)findViewById(R.id.swipe_refresh);
+        //设置刷新进度条的颜色
+        swipeRefresh.setColorSchemeResources(R.color.colorPrimary);
+
+        drawerLayout = (DrawerLayout)findViewById(R.id.drawer_layout);
+
+
+
 
 
 
@@ -98,12 +124,17 @@ public class WeatherActivity extends AppCompatActivity {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(WeatherActivity.this,addCity.class);
-                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this).edit();
-                editor.putString("weather",null);
-                editor.apply();
-                startActivity(intent);
-                finish();
+//                Intent intent = new Intent(WeatherActivity.this,addCity.class);
+//                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this).edit();
+//                editor.putString("weather",null);
+//                editor.apply();
+//                startActivity(intent);
+
+                //当点击的时候，打开侧滑菜单
+                drawerLayout.openDrawer(GravityCompat.START);
+
+
+//                finish();
             }
 
 
@@ -115,6 +146,10 @@ public class WeatherActivity extends AppCompatActivity {
             lvhao weather = Utility.handleWeatherResponse(weatherString);
 
 
+            mWeatherName = weather.getResult().getToday().getCity();
+
+
+
             assert weather != null;
             showWeatherInfo(weather);
 
@@ -122,10 +157,22 @@ public class WeatherActivity extends AppCompatActivity {
         } else
             {
             //利用Intent传值
-            String weatherId = getIntent().getStringExtra("weather_id");
+           // String weatherId = getIntent().getStringExtra("weather_id");
+                mWeatherName = getIntent().getStringExtra("weather_id");
+
             weaherLayout.setVisibility(View.INVISIBLE);
-            requestWeather(weatherId);
+
+
+            requestWeather(mWeatherName);
         }
+
+        //设置下拉刷新触发器
+        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                requestWeather(mWeatherName);
+            }
+        });
 
         String bingPic = prefs.getString("bing_pic",null);
         if (bingPic != null){
@@ -156,12 +203,15 @@ public class WeatherActivity extends AppCompatActivity {
                             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this).edit();
                             editor.putString("weather",responseText);
                             editor.apply();
+                            mWeatherName = weather.getResult().getToday().getCity();
                             showWeatherInfo(weather);
 
 
                         }else {
                             Toast.makeText(WeatherActivity.this,"获取失败！！！4545454545！" ,Toast.LENGTH_SHORT).show();
                         }
+                        //刷新结束并且隐藏进度条
+                        swipeRefresh.setRefreshing(false);
                     }
                 });
 
@@ -174,6 +224,8 @@ public class WeatherActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         Toast.makeText(WeatherActivity.this,"获取失败！！！！" ,Toast.LENGTH_SHORT).show();
+                        //刷新结束并且隐藏进度条
+                        swipeRefresh.setRefreshing(false);
                     }
                 });
 
@@ -226,6 +278,8 @@ public class WeatherActivity extends AppCompatActivity {
 
 
         weaherLayout.setVisibility(View.VISIBLE);
+        Intent intent = new Intent(this,AutoUpdataService.class);
+       // startActivity(intent);
 
     }
 

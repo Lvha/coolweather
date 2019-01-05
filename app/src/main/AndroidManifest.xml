@@ -3,11 +3,14 @@
     package="com.example.lvhao.coolweather">
 
     <uses-permission android:name="android.permission.INTERNET" />
+<!--
+在换图标的时候可能会不显示，是因为主题的问题，系统会有主题图标缓存
 
+-->
     <application
         android:name="org.litepal.LitePalApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/logo"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -20,7 +23,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".WeatherActivity" />
-        <activity android:name=".addCity"></activity>
+
+        <service
+            android:name=".service.AutoUpdataService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
